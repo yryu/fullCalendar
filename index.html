@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>演示：FullCalendar应用——增删改数据操作</title>
+    <meta name="keywords" content="日程安排,FullCalendar,日历,JSON,jquery实例">
+    <meta name="description" content="在线演示FullCalendar新建、修改和删除日程事件的示例。">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/fullcalendar.css">
+    <style type="text/css">
+        #box {
+            padding: 30px 30px 60px;
+        }
+
+        #box .btn-warning {
+            float: left;
+        }
+
+        #box .btn-info, #box .btn-default {
+            float: right;
+            margin: 0 0 0 8px;
+        }
+
+        #box .group {
+            margin: 15px 0 0;
+        }
+
+        #box .group:first-child {
+            margin: 0;
+        }
+
+        #box .group label {
+            display: inline-block;
+            width: 78px;
+            text-align: right;
+        }
+
+        #box .group .form-control {
+            height: 24px;
+            width: 60%;
+        }
+
+        #box .group a {
+            text-decoration: none;
+        }
+
+        #box .btn-group {
+            padding: 15px 0 0;
+        }
+
+        #calendar {
+            width: 960px;
+            margin: 20px auto 10px
+        }
+
+        .fancy {
+            width: 450px;
+            height: auto
+        }
+
+        .fancy h3 {
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #d3d3d3;
+            font-size: 14px
+        }
+
+        .fancy form {
+            padding: 10px
+        }
+
+        .fancy p {
+            height: 28px;
+            line-height: 28px;
+            padding: 4px;
+            color: #999
+        }
+
+        .input {
+            height: 20px;
+            line-height: 20px;
+            padding: 2px;
+            border: 1px solid #d3d3d3;
+            width: 100px
+        }
+
+        .btn {
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            padding: 5px 12px;
+            cursor: pointer
+        }
+
+        .btn_ok {
+            background: #360;
+            border: 1px solid #390;
+            color: #fff
+        }
+
+        .btn_cancel {
+            background: #f0f0f0;
+            border: 1px solid #d3d3d3;
+            color: #666
+        }
+
+        .btn_del {
+            background: #f90;
+            border: 1px solid #f80;
+            color: #fff
+        }
+
+        .sub_btn {
+            height: 32px;
+            line-height: 32px;
+            padding-top: 6px;
+            border-top: 1px solid #f0f0f0;
+            text-align: right;
+            position: relative
+        }
+
+        .sub_btn .del {
+            position: absolute;
+            left: 2px
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="header">
+        <div id="logo"><h1><a href="http://www.helloweba.com" title="返回helloweba首页">helloweba</a></h1></div>
+    </div>
+    <div id="main" style="width:1060px">
+        <h2 class="top_title"><a href="http://www.helloweba.com/view-blog-233.html">FullCalendar应用——增删改数据操作</a></h2>
+        <div id='calendar'></div>
+    </div>
+</div>
+<div id="box" style="display: none;">
+    <div class="group">
+        <label>任务标题：</label>
+        <input id="title" type="text" class="form-control">
+    </div>
+    <div class="group">
+        <label>开始时间：</label>
+        <input id="startDate" type="text" class="form-control">
+    </div>
+    <div class="group">
+        <label>结束时间：</label>
+        <input id="endDate" type="text" class="form-control">
+    </div>
+    <div class="group">
+        <label>任务分配给：</label>
+        <input type="text" class="form-control">
+    </div>
+    <div class="group">
+        <label>任务描述：</label>
+        <input type="text" class="form-control">
+    </div>
+    <div class="group btn-group">
+        <a class="btn btn-lg btn-warning" href="javascript:;">删除</a>
+        <a class="btn btn-lg btn-default" href="javascript:;">取消</a>
+        <a class="btn btn-lg btn-info" href="javascript:;">确定</a>
+    </div>
+</div>
+<script src='js/jquery-1.9.1.js'></script>
+<script src='js/jquery-ui.js'></script>
+<script src='js/fullcalendar.min.js'></script>
+<script src='layer/layer.js'></script>
+<script>
+    $(function () {
+        var calendar = $('#calendar');
+        calendar.fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+//            eventSources: [
+//                {
+//                    events: [
+//                        {
+//                            title: 'event1',
+//                            start: '2017-08-01'
+//                        },
+//                        {
+//                            title: 'event2',
+//                            start: '2017-08-05',
+//                            end: '2010-08-09'
+//                        }
+//                    ],
+//                    color: 'black',
+//                    textColor: 'yellow'
+//                }
+//            ],
+            dayClick: function (date, allDay, jsEvent, view) {
+                var selDate = $.fullCalendar.formatDate(date, 'yyyy-MM-dd');
+                // $('#end').datetimepicker('setDate', selDate);
+                layer.open({
+                    type: 1,
+                    title: '编辑任务',
+                    content: $('#box'),
+                    area: ['500px', 'auto'],
+                    success: function (layero, index) {
+                        $('.btn-default').click(function () { // 取消
+                            layer.close(index);
+                        });
+                        $('.btn-warning').click(function () { // 删除
+                            console.log('.btn-warning');
+                        });
+                        $('.btn-info').click(function () { // 确定
+                            var source = [
+                                {
+                                    title: 'Event1',
+                                    start: selDate,
+                                    end: '2017-08-15'
+                                }
+                            ];
+                            calendar.fullCalendar('addEventSource', source);
+                            layer.close(index);
+                        });
+                    }
+                });
+            },
+            editable: true, // 事件可编辑、拖动
+            eventClick: function (calEvent, jsEvent, view) {
+                var startDate = $.fullCalendar.formatDate(calEvent.start, 'yyyy-MM-dd');
+                var endDate = $.fullCalendar.formatDate(calEvent.end, 'yyyy-MM-dd');
+                var title = calEvent.title;
+                layer.open({
+                    type: 1,
+                    title: '编辑任务',
+                    content: $('#box'),
+                    area: ['500px', 'auto'],
+                    success: function (layero, index) {
+                        $('#title').val(title);
+                        $('#startDate').val(startDate);
+                        $('#endDate').val(endDate);
+                        $('.btn-default').click(function () { // 取消
+                            layer.close(index);
+                        });
+                        $('.btn-warning').click(function () { // 删除
+                            console.log('.btn-warning');
+                        });
+                        $('.btn-info').click(function () { // 确定
+                            layer.close(index);
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
